@@ -204,6 +204,7 @@ def redeem():
             os._exit(0)
     except:
         messagebox.showerror("Auth.GG Licensing System", "Something went wrong!")
+        os._exit(0)
         
 
 def aio():
@@ -228,6 +229,9 @@ def aio():
                         return True
                     else:
                         return False
+            except:
+                messagebox.showerror("Auth.GG Licensing System", "Something went wrong!")
+                os._exit(0)
         else:
             messagebox.showerror("Auth.GG Licensing System", "Login is not available at this time!")
             os._exit(0)
@@ -251,6 +255,9 @@ def aio():
                         return True
                     else:
                         return False
+            except:
+                messagebox.showerror("Auth.GG Licensing System", "Something went wrong!")
+                os._exit(0)
         else:
             messagebox.showerror("Auth.GG Licensing System", "Register is not available at this time!")
             os._exit(0)  
