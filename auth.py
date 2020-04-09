@@ -28,10 +28,9 @@ filehash = md5.hexdigest()
 
 login_status = 0
 register_status = 0
-secret = "APPLICATION_SECRET"
-aid = "AID_HERE"
-apikey = "API_KEY"
-version = "version"
+secret = ""
+aid = ""
+version = ""
 
 def main():
     clear()
@@ -61,7 +60,7 @@ def integrity_check():
     data = {
         "type": "start",
         "secret": secret,
-        "apikey": apikey
+        'aid': aid
     }
     try:
         with requests.Session() as sess:
@@ -80,9 +79,9 @@ def integrity_check():
                 if request_1.json()['hash'] != filehash:
                     messagebox.showerror("Auth.GG | Licensing System", "Hashes do not match, file tampering possible!")
                     os._exit(0)
-                if request_1.json()['hash'] != "Enabled":
+                if request_1.json()['login'] != "Enabled":
                     login_status = 1
-                if request_1.json()['hash'] != "Enabled":
+                if request_1.json()['register'] != "Enabled":
                     register_status = 1
             else:
                 messagebox.showinfo('Auth.GG | Licensing System', 'Developer mode is enabled, bypassing security checks!')
