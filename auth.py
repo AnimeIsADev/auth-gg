@@ -154,7 +154,7 @@ def register():
         try:
             with requests.Session() as sess:
                 request_3 = sess.post('https://api.auth.gg/version2/api.php', data=data, headers=headers)
-                if "sucess" in request_3.text:
+                if "success" in request_3.text:
                     print("\n[!] {}, you have successfully registered!".format(username))
                     time.sleep(2)
                     os._exit(0)
