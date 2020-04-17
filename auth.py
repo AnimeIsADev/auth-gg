@@ -28,9 +28,11 @@ filehash = md5.hexdigest()
 
 login_status = 0
 register_status = 0
-secret = ""
-aid = ""
-version = ""
+apikey = "UPDATE_ME"
+secret = "UPDATE_ME"
+aid = "UPDATE_ME"
+version = "1.0"
+random = "python"
 
 def main():
     clear()
@@ -59,8 +61,10 @@ def integrity_check():
     headers = {"User-Agent": "AuthGG"}
     data = {
         "type": "start",
+        "random": random,
         "secret": secret,
-        'aid': aid
+        'aid': aid,
+        'apikey': apikey
     }
     try:
         with requests.Session() as sess:
@@ -97,6 +101,8 @@ def login():
         data = {
             "type": "login",
             "aid": aid,
+            "random": random,
+            'apikey': apikey,
             "secret": secret,
             "username": username,
             "password": password,
@@ -144,6 +150,8 @@ def register():
         data = {
             "type": "register",
             "aid": aid,
+            "random": random,
+            'apikey': apikey,
             "secret": secret,
             "username": username,
             "password": password,
@@ -185,6 +193,8 @@ def redeem():
     data = {
             "type": "redeem",
             "aid": aid,
+            "random": random,
+            'apikey': apikey,
             "secret": secret,
             "username": username,
             "password": password,
@@ -215,6 +225,8 @@ def aio():
             data = {
                 "type": "login",
                 "aid": aid,
+                "random": random,
+                'apikey': apikey,
                 "secret": secret,
                 "username": key,
                 "password": key,
@@ -239,6 +251,7 @@ def aio():
             data = {
                 "type": "register",
                 "aid": aid,
+                "random": random,
                 "secret": secret,
                 "username": key,
                 "password": key,
