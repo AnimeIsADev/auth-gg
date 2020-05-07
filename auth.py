@@ -1,12 +1,16 @@
 import os
 import time
-import requests
-import subprocess
-import tkinter
-from tkinter import messagebox
-import sys
-import hashlib
-
+try:
+    import requests
+    import subprocess
+    import tkinter
+    from tkinter import messagebox
+    import sys
+    import hashlib
+except Exception as e:
+    print(f'Error -> {e}')
+    time.sleep(2)
+    os._exit(0)
 
 root = tkinter.Tk()
 root.withdraw()
@@ -28,11 +32,11 @@ filehash = md5.hexdigest()
 
 login_status = 0
 register_status = 0
-apikey = "UPDATE_ME"
+apikey = "UPDATE_ME" 
 secret = "UPDATE_ME"
 aid = "UPDATE_ME"
 version = "1.0"
-random = "python"
+random = "your random code here"
 
 def main():
     clear()
@@ -68,27 +72,33 @@ def integrity_check():
     }
     try:
         with requests.Session() as sess:
-            request_1 = sess.post("https://api.auth.gg/version2/api.php", data=data, headers=headers)
-            if request_1.json()["status"] == 'Failed':
-                messagebox.showerror("Auth.GG Licensing System", "This application is disabled!")
-                os._exit(0)
-            if request_1.json()['status'] == "Disabled":
-                messagebox.showerror("Auth.GG | Licensing System", "This application is disabled!")
-                os._exit(0)
-            if request_1.json()['developermode'] == 'Disabled':
-                if request_1.json()['version'] != version:
-                    messagebox.showinfo("Auth.GG | Licensing System", "Update [{}] is available!".format(request_1.json()['version']))
-                    os.system('start {}'.format(request_1.json()['downloadlink']))
+            sess.trust_env = False
+            request_1 = sess.post("https://api.auth.gg/version2/api.php", verify=False,data=data, headers=headers)
+            response_1 = request_1.json()
+            flag1 = (response_1 == request_1.json())
+            if flag1:
+                if response_1["status"] == 'Failed':
+                    messagebox.showerror("Auth.GG Licensing System", "This application is disabled!")
                     os._exit(0)
-                if request_1.json()['hash'] != filehash:
-                    messagebox.showerror("Auth.GG | Licensing System", "Hashes do not match, file tampering possible!")
+                if response_1['status'] == "Disabled":
+                    messagebox.showerror("Auth.GG | Licensing System", "This application is disabled!")
                     os._exit(0)
-                if request_1.json()['login'] != "Enabled":
-                    login_status = 1
-                if request_1.json()['register'] != "Enabled":
-                    register_status = 1
+                if response_1['developermode'] == 'Disabled':
+                    if response_1['version'] != version:
+                        messagebox.showinfo("Auth.GG | Licensing System", "Update [{}] is available!".format(response_1['version']))
+                        os.system('start {}'.format(response_1['downloadlink']))
+                        os._exit(0)
+                    if response_1['hash'] != filehash:
+                        messagebox.showerror("Auth.GG | Licensing System", "Hashes do not match, file tampering possible!")
+                        os._exit(0)
+                    if response_1['login'] != "Enabled":
+                        login_status = 1
+                    if response_1['register'] != "Enabled":
+                        register_status = 1
+                else:
+                    messagebox.showinfo('Auth.GG | Licensing System', 'Developer mode is enabled, bypassing security checks!')
             else:
-                messagebox.showinfo('Auth.GG | Licensing System', 'Developer mode is enabled, bypassing security checks!')
+                os._exit(0)
     except:
             messagebox.showerror("Auth.GG Licensing System", "Something went wrong!")
             os._exit(0)     
@@ -111,25 +121,31 @@ def login():
         headers = {"User-Agent": "AuthGG"}
         try:
             with requests.Session() as sess:
-                request_2 = sess.post('https://api.auth.gg/version2/api.php', headers=headers, data=data)
-                if "success" in request_2.text:
-                    print("\n[!] Welcome back, {}!".format(username))
-                    time.sleep(2)
-                    pass
-                else:
-                    if "invalid_details" in request_2.text:
-                        print("\n[!] Please check your credentials!")
-                    elif "invalid_hwid" in request_2.text:
-                        print("\n[!] Invalid HWID, please do not attempt to share accounts!")
-                    elif "hwid_updated" in request_2.text:
-                        print("\n[!] Your HWID has been updated, relogin!")
-                    elif "time_expired" in request_2.text:
-                        print("\n[!] Your subscription has expired!")
-                    elif "net_error" in request_2.text:
-                        print("\n[!] Something went wrong!")
+                sess.trust_env = False
+                request_2 = sess.post('https://api.auth.gg/version2/api.php',  verify=False,headers=headers, data=data)
+                response_2 = request_2.text
+                flag2 = (response_2 == request_2.text)
+                if flag2:
+                    if "success" in response_2:
+                        print("\n[!] Welcome back, {}!".format(username))
+                        time.sleep(2)
+                        pass
                     else:
-                        print("\n[!] Something went wrong!")
-                    time.sleep(2)
+                        if "invalid_details" in response_2:
+                            print("\n[!] Please check your credentials!")
+                        elif "invalid_hwid" in response_2:
+                            print("\n[!] Invalid HWID, please do not attempt to share accounts!")
+                        elif "hwid_updated" in response_2:
+                            print("\n[!] Your HWID has been updated, relogin!")
+                        elif "time_expired" in response_2:
+                            print("\n[!] Your subscription has expired!")
+                        elif "net_error" in response_2:
+                            print("\n[!] Something went wrong!")
+                        else:
+                            print("\n[!] Something went wrong!")
+                        time.sleep(2)
+                        os._exit(0)
+                else:
                     os._exit(0)
 
         except:
@@ -161,21 +177,27 @@ def register():
         }
         try:
             with requests.Session() as sess:
-                request_3 = sess.post('https://api.auth.gg/version2/api.php', data=data, headers=headers)
-                if "success" in request_3.text:
-                    print("\n[!] {}, you have successfully registered!".format(username))
-                    time.sleep(2)
-                    os._exit(0)
-                else:
-                    if "invalid_token" in request_3.text:
-                        print("\n[!] Token invalid or already used")
-                    elif "invalid_username" in request_3.text:
-                        print("\n[!] Username already taken, please choose another one")
-                    elif "email_used" in request_3.text:
-                        print('\n[!] Email is invalid or in use!')
+                sess.trust_env = False
+                request_3 = sess.post('https://api.auth.gg/version2/api.php',  verify=False,data=data, headers=headers)
+                response_3 = request_3.text
+                flag3 = (response_3 == request_3.text)
+                if flag3:
+                    if "success" in response_3:
+                        print("\n[!] {}, you have successfully registered!".format(username))
+                        time.sleep(2)
+                        os._exit(0)
                     else:
-                        print("\n[!] Something went wrong!")
-                    time.sleep(2)
+                        if "invalid_token" in response_3:
+                            print("\n[!] Token invalid or already used")
+                        elif "invalid_username" in response_3:
+                            print("\n[!] Username already taken, please choose another one")
+                        elif "email_used" in response_3:
+                            print('\n[!] Email is invalid or in use!')
+                        else:
+                            print("\n[!] Something went wrong!")
+                        time.sleep(2)
+                        os._exit(0)
+                else:
                     os._exit(0)
         except:
             messagebox.showerror("Auth.GG Licensing System", "Something went wrong!")
@@ -202,15 +224,21 @@ def redeem():
     }
     try:
         with requests.Session() as sess:
-            request_4 = sess.post("https://api.auth.gg/version2/api.php", data=data, headers=headers)
-            if "success" in request_4.text:
-                print("\n[!] Successfully redeemed license & extended subscription!")
-            elif "invalid_token" in request_4.text:
-                print('\n[!] Invalid Credentials!')
-            elif "net_error" in request_4.text:
-                print('\n[!] Something went wrong!')
-            time.sleep(2)
-            os._exit(0)
+            sess.trust_env = False
+            request_4 = sess.post("https://api.auth.gg/version2/api.php", verify=False, data=data, headers=headers)
+            response_4 = request_4.text
+            flag4 = (response_4 == request_4.text)
+            if flag4:
+                if "success" in response_4:
+                    print("\n[!] Successfully redeemed license & extended subscription!")
+                elif "invalid_token" in response_4:
+                    print('\n[!] Invalid Credentials!')
+                elif "net_error" in response_4:
+                    print('\n[!] Something went wrong!')
+                time.sleep(2)
+                os._exit(0)
+            else:
+                os._exit(0)
     except:
         messagebox.showerror("Auth.GG Licensing System", "Something went wrong!")
         os._exit(0)
@@ -235,7 +263,8 @@ def aio():
             headers = {"User-Agent": "AuthGG"}
             try:
                 with requests.Session() as sess:
-                    request_5 = sess.post('https://api.auth.gg/version2/api.php', headers=headers, data=data)
+                    sess.trust_env = False
+                    request_5 = sess.post('https://api.auth.gg/version2/api.php', verify=False, headers=headers, data=data)
                     if "success" in request_5.text:
                         return True
                     else:
@@ -262,7 +291,8 @@ def aio():
             headers = {"User-Agent": "AuthGG"}
             try:
                 with requests.Session() as sess:
-                    request_6 = sess.post('https://api.auth.gg/version2/api.php', headers=headers, data=data)
+                    sess.trust_env = False
+                    request_6 = sess.post('https://api.auth.gg/version2/api.php',  verify=False,headers=headers, data=data)
                     if "success" in request_6.text:
                         return True
                     else:
@@ -287,6 +317,8 @@ def aio():
             os._exit(0)
             
                 
-integrity_check()
-main()
+if integrity_check():
+    pass
+else:
+    main()
     
