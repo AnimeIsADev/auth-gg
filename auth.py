@@ -317,8 +317,7 @@ def aio():
             os._exit(0)
             
                 
-if integrity_check():
-    pass
-else:
-    main()
+integrity_check()
+
+main()
     
